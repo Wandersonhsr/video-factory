@@ -298,9 +298,12 @@ export function HeliosStudio() {
           <div className="brand">VYRAMO AI</div>
           <div className="tagline">Find. Remodel. Sell. · Video Engine V1</div>
         </div>
-        <div className={`status status-${status}`}>
-          <span className="status-dot" />
-          {STATUS_LABEL[status]}
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <a className="top-link" href="/gold">GOLD TOPICS</a>
+          <div className={`status status-${status}`}>
+            <span className="status-dot" />
+            {STATUS_LABEL[status]}
+          </div>
         </div>
       </header>
 
