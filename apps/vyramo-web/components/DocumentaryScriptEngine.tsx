@@ -29,7 +29,7 @@ export function DocumentaryScriptEngine() {
         <div>
           <div className="eyebrow">STORYBOARD-FIRST · RETENTION-FIRST</div>
           <h1>Um fato. Um ângulo. Uma história impossível de confundir.</h1>
-          <p className="muted">A arquitetura usa cenas como unidade operacional, preserva continuidade de série e obriga o roteiro a passar por evidência, ritmo, CTA e próximo-vídeo antes do render.</p>
+          <p className="muted">A arquitetura cruza fato + ângulo + intenção real de busca, preserva continuidade de série e obriga o roteiro a passar por evidência, ritmo, CTA e próximo-vídeo antes do render.</p>
         </div>
         <div className="documentary-gate">
           <span>QUALITY GATE</span>
@@ -76,9 +76,9 @@ export function DocumentaryScriptEngine() {
         </div>
 
         <div className="panel gold-panel">
-          <div className="eyebrow">SYNTHESIA PATTERN → VYRAMO</div>
+          <div className="eyebrow">ALSOASKED PATTERN → VYRAMO</div>
           <div className="agent-pipeline">
-            {["Sources / Evidence Pack", "Continuous Storyboard", "Scene-by-scene Script", "Dynamic Visual Direction", "CTA + Tension Metadata", "CEO Validation", "Provider-neutral Export"].map((stage, index) => <div className="agent-stage" key={stage}><span>{String(index + 1).padStart(2, "0")}</span><strong>{stage}</strong></div>)}
+            {["Root Query", "PAA Intent Graph", "Intent Clusters", "Micro-hooks / FAQ Gaps", "Adjacent Video Questions", "SEO + Binge Mapping", "CEO Validation"].map((stage, index) => <div className="agent-stage" key={stage}><span>{String(index + 1).padStart(2, "0")}</span><strong>{stage}</strong></div>)}
           </div>
         </div>
       </section>
