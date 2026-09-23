@@ -1,4 +1,5 @@
 import type { VideoPerformanceSnapshot } from "./types";
+import type { AlsoAskedIntentGraph } from "./alsoasked-intent";
 
 export type EvidenceItem = { id: string; url?: string; publisher?: string; title: string; publishedAt?: string; note?: string };
 
@@ -13,6 +14,7 @@ export type DocumentaryScriptInput = {
   angulos_ja_usados?: string[];
   evidencePack?: EvidenceItem[];
   performanceHistory?: VideoPerformanceSnapshot[];
+  intentGraph?: AlsoAskedIntentGraph;
 };
 
 export type ScriptBlock = { janela: string; texto: string; tensao_check?: boolean; objetivo_narrativo: string };
