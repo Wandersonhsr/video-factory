@@ -28,8 +28,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: apps/vyramo-web/package-lock.json
 
       - name: Install
         run: npm install --no-audit --no-fund
