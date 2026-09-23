@@ -1,4 +1,5 @@
 import { buildAdaptiveMemory } from "./learning";
+import { buildAlsoAskedResearchBrief } from "./alsoasked-intent";
 import { buildDocumentaryBrief, type DocumentaryScriptInput, type DocumentaryScriptOutput } from "./documentary-script";
 import { validateDocumentaryScript } from "./documentary-validator";
 import type { EditorialModel } from "./types";
@@ -31,6 +32,7 @@ const SYSTEM = [
 export async function runDocumentaryScriptAgent(input: DocumentaryScriptInput, model: EditorialModel): Promise<DocumentaryAgentResult> {
   const brief = buildDocumentaryBrief(input);
   const adaptiveMemory = buildAdaptiveMemory(input.performanceHistory || []);
+  const intentResearch = input.intentGraph ? buildAlsoAskedResearchBrief(input.intentGraph) : null;
   let draft = await model.completeJson<DocumentaryScriptOutput>({
     role: ROLE,
     system: SYSTEM,
