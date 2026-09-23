@@ -86,6 +86,11 @@ export type EditorialAgentInput = {
   marketBenchmarks: BenchmarkVideo[];
   performanceHistory?: VideoPerformanceSnapshot[];
   targetQuality?: number;
+  angle?: string;
+  previousVideoSummary?: string;
+  nextAngle?: string;
+  usedAngles?: string[];
+  evidencePack?: Array<{ id: string; url?: string; publisher?: string; title: string; publishedAt?: string; note?: string }>;
 };
 
 export type EditorialModel = {
