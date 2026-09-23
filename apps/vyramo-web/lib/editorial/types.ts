@@ -91,6 +91,7 @@ export type EditorialAgentInput = {
   nextAngle?: string;
   usedAngles?: string[];
   evidencePack?: Array<{ id: string; url?: string; publisher?: string; title: string; publishedAt?: string; note?: string }>;
+  intentGraph?: import("./alsoasked-intent").AlsoAskedIntentGraph;
 };
 
 export type EditorialModel = {
