@@ -254,6 +254,22 @@ export function DiamondAgent() {
         </section>
       )}
 
+      <section className="panel gold-panel diamond-method">
+        <div className="eyebrow">CONTENT UNIVERSE · BINGE GRAPH</div>
+        <div className="diamond-metrics">
+          <div><strong>1</strong><span>Fato validado</span></div>
+          <div><strong>12</strong><span>Eixos de lateralização</span></div>
+          <div><strong>1</strong><span>Próximo vídeo principal</span></div>
+          <div><strong>1</strong><span>Alternativa contextual</span></div>
+          <div><strong>1</strong><span>Wildcard opcional</span></div>
+        </div>
+        <p className="microcopy">
+          Cada vídeo resolve sua promessa principal e abre apenas a próxima
+          pergunta legítima. O sistema mede clique de tela final e aprende quais
+          pontes aumentam sessões sem sacrificar satisfação.
+        </p>
+      </section>
+
       <section className="gold-grid diamond-bottom">
         <div className="panel gold-panel">
           <div className="eyebrow">QUALITY GATE · 100 POINTS</div>
