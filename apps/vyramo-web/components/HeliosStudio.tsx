@@ -299,6 +299,7 @@ export function HeliosStudio() {
           <div className="tagline">Find. Remodel. Sell. · Video Engine V1</div>
         </div>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <a className="top-link" href="/diamond">DIAMOND AGENT</a>
           <a className="top-link" href="/gold">GOLD TOPICS</a>
           <div className={`status status-${status}`}>
             <span className="status-dot" />
