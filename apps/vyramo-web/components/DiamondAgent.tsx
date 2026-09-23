@@ -80,7 +80,7 @@ export function DiamondAgent() {
           </div>
         </div>
         <div className="diamond-nav">
-          <a className="top-link" href="/gold">GOLD TOPICS</a>
+          <a className="top-link" href="/documentary">SCRIPT ENGINE</a>\n          <a className="top-link" href="/gold">GOLD TOPICS</a>
           <a className="top-link" href="/">VIDEO ENGINE</a>
         </div>
       </header>
