@@ -1,4 +1,5 @@
-import { buildAdaptiveMemory } from "./learning";\nimport { runDocumentaryScriptAgent } from "./documentary-agent";
+import { buildAdaptiveMemory } from "./learning";
+import { runDocumentaryScriptAgent } from "./documentary-agent";
 import { DIAMOND_AGENT_ROLES } from "./prompts";
 import { scoreEditorialQuality } from "./quality";
 import type {
@@ -22,6 +23,7 @@ export type DiamondAgentResult = {
   hook: StageOutput;
   story: StageOutput;
   script: StageOutput;
+  documentaryValidation: Record<string, unknown>;
   lateralization: StageOutput;
   sessionPlan: StageOutput;
   visualPlan: StageOutput;
@@ -106,6 +108,7 @@ export async function runDiamondEditorialAgent(
       angulos_ja_usados: input.usedAngles,
       evidencePack: input.evidencePack,
       performanceHistory: input.performanceHistory,
+      intentGraph: input.intentGraph,
     },
     model,
   );
@@ -228,6 +231,7 @@ PACKAGE: ${JSON.stringify({
     hook,
     story,
     script,
+    documentaryValidation: documentary.validation as unknown as Record<string, unknown>,
     lateralization,
     sessionPlan,
     visualPlan,
