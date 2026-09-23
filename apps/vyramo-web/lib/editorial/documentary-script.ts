@@ -1,1 +1,81 @@
-import type { VideoPerformanceSnapshot } from "./types";\n\nexport type EvidenceItem = { id: string; url?: string; publisher?: string; title: string; publishedAt?: string; note?: string };\n\nexport type DocumentaryScriptInput = {\n  fato_central: string;\n  angulo: string;\n  video_anterior?: string;\n  duracao_alvo?: number;\n  idioma?: string;\n  publico?: string;\n  proximo_angulo?: string;\n  angulos_ja_usados?: string[];\n  evidencePack?: EvidenceItem[];\n  performanceHistory?: VideoPerformanceSnapshot[];\n};\n\nexport type ScriptBlock = { janela: string; texto: string; tensao_check?: boolean; objetivo_narrativo: string };\nexport type DocumentaryScene = {\n  scene_id: string; start_second: number; end_second: number; narration: string;\n  visual_direction: string;\n  visual_source_type: "generative-video" | "licensed-stock" | "original-motion" | "chart" | "map" | "document" | "interface" | "still-image";\n  source_ids: string[]; tensao_check?: boolean; cta_id?: string;\n};\nexport type DocumentaryClaim = { claim: string; source_ids: string[]; verification_status: "verified" | "needs_verification" };\nexport type DocumentaryCTA = { id: string; type: "comment" | "subscribe" | "like" | "share" | "next_video"; placement_second: number; trigger: string; copy: string };\n\nexport type DocumentaryScriptOutput = {\n  titulo: string;\n  hook_opcoes: [string, string];\n  thumbnail_sugestao: string;\n  roteiro: { hook: ScriptBlock; promessa: ScriptBlock; ato_1: ScriptBlock; ato_2: ScriptBlock; virada: ScriptBlock; resolucao: ScriptBlock; fechamento_gancho: ScriptBlock };\n  loop_principal: string;\n  gancho_proximo_video: string;\n  storyboard: DocumentaryScene[];\n  claims: DocumentaryClaim[];\n  ctas: DocumentaryCTA[];\n  continuity: { referencias_ao_video_anterior: string[]; informacoes_repetidas_do_video_anterior: string[]; novo_valor_entregue: string[]; proximo_angulo: string };\n  seo: { primary_search_intent: string; secondary_search_intents: string[]; description: string; chapters: Array<{ time: string; title: string }>; title_variants: string[] };\n  validation_notes: string[];\n};\n\nexport const FORTUNE_DECODED_CHANNEL_LAWS = {\n  defaultDurationMinutes: 9, defaultLanguage: "English", targetWordsPerMinute: 150, maxSentenceWords: 20, microHookIntervalSeconds: 90, qualityGate: 95,\n  ctaRules: [\n    "Never ask for engagement before delivering concrete value.",\n    "Use at most one CTA at a time; never stack subscribe, like, comment and share in one sentence.",\n    "Comment CTA must ask a specific opinion or prediction that follows naturally from the story.",\n    "Subscribe CTA is allowed only after a payoff that proves the channel value.",\n    "Like/share CTA must be contextual, optional and concise.",\n    "The final CTA prioritizes the next-video question and end-screen continuation."\n  ],\n  narrativeRules: [\n    "No greeting, channel intro, or generic setup before the hook.",\n    "No institutional filler such as in this video we will explore.",\n    "One spoken idea per sentence.",\n    "Every factual claim must map to at least one evidence source before publication.",\n    "Do not repeat information from the previous video; reference it only when continuity requires it.",\n    "Every 60-105 seconds, renew tension with evidence, contrast, consequence, reversal, or a sharper question.",\n    "The main promise must be fully paid off before opening the next-video question.",\n    "The next-video hook must be a specific unanswered question tied to a distinct angle."\n  ]\n} as const;\n\nexport function buildTimingPlan(durationMinutes = 9) {\n  const total = Math.max(6, durationMinutes) * 60;\n  const second = (ratio: number) => Math.round(total * ratio);\n  const fmt = (value: number) => { const m = Math.floor(value / 60); const s = value % 60; return m + ":" + String(s).padStart(2, "0"); };\n  return {\n    totalSeconds: total, hook: "0:00-0:15", promessa: "0:15-0:30",\n    ato_1: "0:30-" + fmt(second(0.28)), ato_2: fmt(second(0.28)) + "-" + fmt(second(0.61)),\n    virada: fmt(second(0.61)) + "-" + fmt(second(0.76)), resolucao: fmt(second(0.76)) + "-" + fmt(second(0.93)),\n    fechamento_gancho: fmt(second(0.93)) + "-" + fmt(total),\n    tensionCheckSeconds: Array.from({ length: Math.max(1, Math.floor((total - 45) / 90)) }, (_, i) => 75 + i * 90).filter((v) => v < total - 40)\n  };\n}\n\nexport function buildDocumentaryBrief(input: DocumentaryScriptInput) {\n  const duration = input.duracao_alvo ?? FORTUNE_DECODED_CHANNEL_LAWS.defaultDurationMinutes;\n  return { channel: "Fortune Decoded", role: "Cinematic documentary writer for technology, AI, money systems and business.", input: { ...input, duracao_alvo: duration, idioma: input.idioma || FORTUNE_DECODED_CHANNEL_LAWS.defaultLanguage }, timing: buildTimingPlan(duration), laws: FORTUNE_DECODED_CHANNEL_LAWS };\n}
+import type { VideoPerformanceSnapshot } from "./types";
+
+export type EvidenceItem = { id: string; url?: string; publisher?: string; title: string; publishedAt?: string; note?: string };
+
+export type DocumentaryScriptInput = {
+  fato_central: string;
+  angulo: string;
+  video_anterior?: string;
+  duracao_alvo?: number;
+  idioma?: string;
+  publico?: string;
+  proximo_angulo?: string;
+  angulos_ja_usados?: string[];
+  evidencePack?: EvidenceItem[];
+  performanceHistory?: VideoPerformanceSnapshot[];
+};
+
+export type ScriptBlock = { janela: string; texto: string; tensao_check?: boolean; objetivo_narrativo: string };
+export type DocumentaryScene = {
+  scene_id: string; start_second: number; end_second: number; narration: string;
+  visual_direction: string;
+  visual_source_type: "generative-video" | "licensed-stock" | "original-motion" | "chart" | "map" | "document" | "interface" | "still-image";
+  source_ids: string[]; tensao_check?: boolean; cta_id?: string;
+};
+export type DocumentaryClaim = { claim: string; source_ids: string[]; verification_status: "verified" | "needs_verification" };
+export type DocumentaryCTA = { id: string; type: "comment" | "subscribe" | "like" | "share" | "next_video"; placement_second: number; trigger: string; copy: string };
+
+export type DocumentaryScriptOutput = {
+  titulo: string;
+  hook_opcoes: [string, string];
+  thumbnail_sugestao: string;
+  roteiro: { hook: ScriptBlock; promessa: ScriptBlock; ato_1: ScriptBlock; ato_2: ScriptBlock; virada: ScriptBlock; resolucao: ScriptBlock; fechamento_gancho: ScriptBlock };
+  loop_principal: string;
+  gancho_proximo_video: string;
+  storyboard: DocumentaryScene[];
+  claims: DocumentaryClaim[];
+  ctas: DocumentaryCTA[];
+  continuity: { referencias_ao_video_anterior: string[]; informacoes_repetidas_do_video_anterior: string[]; novo_valor_entregue: string[]; proximo_angulo: string };
+  seo: { primary_search_intent: string; secondary_search_intents: string[]; description: string; chapters: Array<{ time: string; title: string }>; title_variants: string[] };
+  validation_notes: string[];
+};
+
+export const FORTUNE_DECODED_CHANNEL_LAWS = {
+  defaultDurationMinutes: 9, defaultLanguage: "English", targetWordsPerMinute: 150, maxSentenceWords: 20, microHookIntervalSeconds: 90, qualityGate: 95,
+  ctaRules: [
+    "Never ask for engagement before delivering concrete value.",
+    "Use at most one CTA at a time; never stack subscribe, like, comment and share in one sentence.",
+    "Comment CTA must ask a specific opinion or prediction that follows naturally from the story.",
+    "Subscribe CTA is allowed only after a payoff that proves the channel value.",
+    "Like/share CTA must be contextual, optional and concise.",
+    "The final CTA prioritizes the next-video question and end-screen continuation."
+  ],
+  narrativeRules: [
+    "No greeting, channel intro, or generic setup before the hook.",
+    "No institutional filler such as in this video we will explore.",
+    "One spoken idea per sentence.",
+    "Every factual claim must map to at least one evidence source before publication.",
+    "Do not repeat information from the previous video; reference it only when continuity requires it.",
+    "Every 60-105 seconds, renew tension with evidence, contrast, consequence, reversal, or a sharper question.",
+    "The main promise must be fully paid off before opening the next-video question.",
+    "The next-video hook must be a specific unanswered question tied to a distinct angle."
+  ]
+} as const;
+
+export function buildTimingPlan(durationMinutes = 9) {
+  const total = Math.max(6, durationMinutes) * 60;
+  const second = (ratio: number) => Math.round(total * ratio);
+  const fmt = (value: number) => { const m = Math.floor(value / 60); const s = value % 60; return m + ":" + String(s).padStart(2, "0"); };
+  return {
+    totalSeconds: total, hook: "0:00-0:15", promessa: "0:15-0:30",
+    ato_1: "0:30-" + fmt(second(0.28)), ato_2: fmt(second(0.28)) + "-" + fmt(second(0.61)),
+    virada: fmt(second(0.61)) + "-" + fmt(second(0.76)), resolucao: fmt(second(0.76)) + "-" + fmt(second(0.93)),
+    fechamento_gancho: fmt(second(0.93)) + "-" + fmt(total),
+    tensionCheckSeconds: Array.from({ length: Math.max(1, Math.floor((total - 45) / 90)) }, (_, i) => 75 + i * 90).filter((v) => v < total - 40)
+  };
+}
+
+export function buildDocumentaryBrief(input: DocumentaryScriptInput) {
+  const duration = input.duracao_alvo ?? FORTUNE_DECODED_CHANNEL_LAWS.defaultDurationMinutes;
+  return { channel: "Fortune Decoded", role: "Cinematic documentary writer for technology, AI, money systems and business.", input: { ...input, duracao_alvo: duration, idioma: input.idioma || FORTUNE_DECODED_CHANNEL_LAWS.defaultLanguage }, timing: buildTimingPlan(duration), laws: FORTUNE_DECODED_CHANNEL_LAWS };
+}
