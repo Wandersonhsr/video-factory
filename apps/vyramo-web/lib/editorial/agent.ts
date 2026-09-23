@@ -22,6 +22,8 @@ export type DiamondAgentResult = {
   hook: StageOutput;
   story: StageOutput;
   script: StageOutput;
+  lateralization: StageOutput;
+  sessionPlan: StageOutput;
   visualPlan: StageOutput;
   packaging: StageOutput;
   policyAudit: StageOutput;
@@ -99,6 +101,20 @@ export async function runDiamondEditorialAgent(
     "{titleWorking, narration, claims:[{claim,evidenceNeeded}], sectionTimestamps}",
   );
 
+  const lateralization = await runStage(
+    model,
+    DIAMOND_AGENT_ROLES.lateralizer,
+    `Expand this validated topic into a content universe. Each branch must add a distinct thesis and new evidence burden. CURRENT STORY: ${JSON.stringify(story)} BENCHMARK: ${JSON.stringify(benchmarkDeconstruction)}`,
+    "{seedThesis, branches:[{axis,title,thesis,viewerPromise,evidenceNeeded,commercialAngle,nextQuestion}], seriesClusters}",
+  );
+
+  const sessionPlan = await runStage(
+    model,
+    DIAMOND_AGENT_ROLES.session,
+    `Design how this video should hand off to the next published content without undermining the current payoff. CURRENT STORY: ${JSON.stringify(story)} CONTENT UNIVERSE: ${JSON.stringify(lateralization)}`,
+    "{primaryNext,secondaryNext,wildcard,final60SecondsBridge,endScreenPlan,playlistPlan}",
+  );
+
   let visualPlan = await runStage(
     model,
     DIAMOND_AGENT_ROLES.visual,
@@ -148,6 +164,8 @@ PACKAGE: ${JSON.stringify({
         hook,
         story,
         script,
+        lateralization,
+        sessionPlan,
         visualPlan,
         packaging,
         policyAudit,
@@ -199,6 +217,8 @@ PACKAGE: ${JSON.stringify({
     hook,
     story,
     script,
+    lateralization,
+    sessionPlan,
     visualPlan,
     packaging,
     policyAudit,
