@@ -4,7 +4,11 @@ import { buildDocumentaryBrief, type DocumentaryScriptInput, type DocumentaryScr
 import { validateDocumentaryScript } from "./documentary-validator";
 import type { EditorialModel } from "./types";
 
-export type DocumentaryAgentResult = { draft: DocumentaryScriptOutput; validation: ReturnType<typeof validateDocumentaryScript>; iterations: number };
+export type DocumentaryAgentResult = {
+  draft: DocumentaryScriptOutput;
+  validation: ReturnType<typeof validateDocumentaryScript>;
+  iterations: number;
+};
 
 const ROLE = "Fortune Decoded Documentary Script Director";
 
@@ -23,44 +27,62 @@ const SYSTEM = [
   "Renew narrative tension approximately every 90 seconds with evidence, contrast, consequence, reversal or a sharper question.",
   "Fully resolve the main promise before opening the next-video question.",
   "The next-video hook must be a specific unanswered question tied to a different angle.",
+  "Use AlsoAsked/PAA data as an intent graph, not as search-volume proof.",
+  "Do not answer every PAA question in one video; use deeper branches for micro-hooks and future episodes.",
   "CTAs must be earned by value. Never stack subscribe, like, comment and share in one sentence.",
   "Never copy or closely paraphrase another creator script, sequence, scenes, title, thumbnail text or distinctive expression.",
   "Benchmark mechanisms, not surface content."
-].join("
-");
+].join("\n");
 
-export async function runDocumentaryScriptAgent(input: DocumentaryScriptInput, model: EditorialModel): Promise<DocumentaryAgentResult> {
+export async function runDocumentaryScriptAgent(
+  input: DocumentaryScriptInput,
+  model: EditorialModel,
+): Promise<DocumentaryAgentResult> {
   const brief = buildDocumentaryBrief(input);
   const adaptiveMemory = buildAdaptiveMemory(input.performanceHistory || []);
-  const intentResearch = input.intentGraph ? buildAlsoAskedResearchBrief(input.intentGraph) : null;
+  const intentResearch = input.intentGraph
+    ? buildAlsoAskedResearchBrief(input.intentGraph)
+    : null;
+
   let draft = await model.completeJson<DocumentaryScriptOutput>({
     role: ROLE,
     system: SYSTEM,
-    prompt: "Create the documentary package from this brief.
-BRIEF:
-" + JSON.stringify(brief) + "
-ADAPTIVE MEMORY:
-" + JSON.stringify(adaptiveMemory) + "
-Return JSON only. The roteiro keys must be hook, promessa, ato_1, ato_2, virada, resolucao and fechamento_gancho. Also return storyboard, claims, ctas, continuity and seo.",
-    schemaHint: "{titulo,hook_opcoes:[string,string],thumbnail_sugestao,roteiro,loop_principal,gancho_proximo_video,storyboard,claims,ctas,continuity,seo,validation_notes}"
+    prompt: [
+      "Create the documentary package from this brief.",
+      "BRIEF:",
+      JSON.stringify(brief),
+      "ALSOASKED INTENT RESEARCH:",
+      JSON.stringify(intentResearch),
+      "ADAPTIVE MEMORY:",
+      JSON.stringify(adaptiveMemory),
+      "Return JSON only. The roteiro keys must be hook, promessa, ato_1, ato_2, virada, resolucao and fechamento_gancho. Also return storyboard, claims, ctas, continuity and seo.",
+    ].join("\n"),
+    schemaHint:
+      "{titulo,hook_opcoes:[string,string],thumbnail_sugestao,roteiro,loop_principal,gancho_proximo_video,storyboard,claims,ctas,continuity,seo,validation_notes}",
   });
 
   let validation = validateDocumentaryScript(input, draft);
   let iterations = 0;
+
   while (validation.gate !== "PASS" && iterations < 4) {
     draft = await model.completeJson<DocumentaryScriptOutput>({
       role: "Fortune Decoded Documentary CEO / Red Team",
       system: SYSTEM,
-      prompt: "Repair only what fails. Preserve strong sections.
-CURRENT DRAFT:
-" + JSON.stringify(draft) + "
-VALIDATION:
-" + JSON.stringify(validation) + "
-Fix blockers first, then warnings. Return full JSON only.",
-      schemaHint: "{titulo,hook_opcoes:[string,string],thumbnail_sugestao,roteiro,loop_principal,gancho_proximo_video,storyboard,claims,ctas,continuity,seo,validation_notes}"
+      prompt: [
+        "Repair only what fails. Preserve strong sections.",
+        "CURRENT DRAFT:",
+        JSON.stringify(draft),
+        "VALIDATION:",
+        JSON.stringify(validation),
+        "Fix blockers first, then warnings. Return full JSON only.",
+      ].join("\n"),
+      schemaHint:
+        "{titulo,hook_opcoes:[string,string],thumbnail_sugestao,roteiro,loop_principal,gancho_proximo_video,storyboard,claims,ctas,continuity,seo,validation_notes}",
     });
+
     validation = validateDocumentaryScript(input, draft);
     iterations += 1;
   }
+
   return { draft, validation, iterations };
 }
