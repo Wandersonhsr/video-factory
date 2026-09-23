@@ -137,7 +137,10 @@ export function GoldTopicEngine() {
             Fortune Decoded · Gold Topic Engine
           </div>
         </div>
-        <a className="top-link" href="/">VIDEO ENGINE</a>
+        <div className="diamond-nav">
+          <a className="top-link" href="/diamond">DIAMOND AGENT</a>
+          <a className="top-link" href="/">VIDEO ENGINE</a>
+        </div>
       </header>
 
       <section className="gold-hero">
