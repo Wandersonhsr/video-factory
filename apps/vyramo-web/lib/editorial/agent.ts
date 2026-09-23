@@ -1,4 +1,4 @@
-import { buildAdaptiveMemory } from "./learning";
+import { buildAdaptiveMemory } from "./learning";\nimport { runDocumentaryScriptAgent } from "./documentary-agent";
 import { DIAMOND_AGENT_ROLES } from "./prompts";
 import { scoreEditorialQuality } from "./quality";
 import type {
@@ -94,12 +94,23 @@ export async function runDiamondEditorialAgent(
     "{thesis, acts, openLoops, payoffMap, scenePurposes, retentionMap}",
   );
 
-  let script = await runStage(
+  const documentary = await runDocumentaryScriptAgent(
+    {
+      fato_central: input.topic,
+      angulo: input.angle || String((opportunity as Record<string, unknown>).thesis || input.topic),
+      video_anterior: input.previousVideoSummary,
+      duracao_alvo: input.targetDurationMinutes,
+      idioma: input.language,
+      publico: input.targetAudience,
+      proximo_angulo: input.nextAngle,
+      angulos_ja_usados: input.usedAngles,
+      evidencePack: input.evidencePack,
+      performanceHistory: input.performanceHistory,
+    },
     model,
-    DIAMOND_AGENT_ROLES.writer,
-    `Write an original long-form script from the approved architecture. STORY: ${JSON.stringify(story)} CONTEXT: ${commonContext}`,
-    "{titleWorking, narration, claims:[{claim,evidenceNeeded}], sectionTimestamps}",
   );
+
+  let script = documentary.draft as unknown as StageOutput;
 
   const lateralization = await runStage(
     model,
