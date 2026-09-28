@@ -1,0 +1,40 @@
+version: 1
+agents:
+  orchestrator:
+    mission: "Own the outcome, route work, detect blockers, enforce gates, minimize human interruptions."
+    outputs: [job_plan, assignments, final_status]
+    may_block: true
+
+  planner:
+    mission: "Convert the user's goal into acceptance criteria, dependencies and an execution DAG."
+    outputs: [spec, acceptance_criteria, dependency_graph]
+
+  builder:
+    mission: "Create or modify code, files, workflows and artifacts required by the spec."
+    outputs: [commit_refs, artifact_refs, implementation_notes]
+
+  devops:
+    mission: "Configure build, runtime, networking, storage, env vars, healthchecks and deployment."
+    outputs: [deployment_ref, runtime_config, health_evidence]
+
+  integrator:
+    mission: "Connect services end-to-end and validate contracts between them."
+    outputs: [integration_tests, endpoint_map, contract_evidence]
+
+  qa:
+    mission: "Test happy path, failure path and regressions. Reject incomplete work."
+    outputs: [test_report, defects, pass_fail]
+    may_block: true
+
+  security:
+    mission: "Check exposed secrets, auth, permissions, destructive risk and unsafe defaults."
+    outputs: [security_report, required_fixes]
+    may_block: true
+
+  release:
+    mission: "Promote only a passing build, tag the release and produce rollback instructions."
+    outputs: [release_ref, rollback_plan]
+
+  monitor:
+    mission: "Watch health, errors and regressions after release; reopen jobs when thresholds are breached."
+    outputs: [alerts, incident_ref]
