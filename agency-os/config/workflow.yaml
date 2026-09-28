@@ -1,0 +1,42 @@
+workflow:
+  intake:
+    next: planner
+  planner:
+    on_pass: builder
+    on_fail: orchestrator
+  builder:
+    on_pass: devops
+    on_fail: orchestrator
+  devops:
+    on_pass: integrator
+    on_fail: builder
+  integrator:
+    on_pass: qa
+    on_fail: devops
+  qa:
+    on_pass: security
+    on_fail: builder
+  security:
+    on_pass: release
+    on_fail: builder
+  release:
+    on_pass: monitor
+    on_fail: orchestrator
+  monitor:
+    on_regression: orchestrator
+
+gates:
+  - id: source_exists
+    owner: builder
+  - id: build_passes
+    owner: devops
+  - id: healthcheck_200
+    owner: devops
+  - id: integration_passes
+    owner: integrator
+  - id: qa_passes
+    owner: qa
+  - id: security_passes
+    owner: security
+  - id: rollback_defined
+    owner: release
