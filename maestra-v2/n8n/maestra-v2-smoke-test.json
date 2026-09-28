@@ -1,0 +1,145 @@
+{
+  "name": "MAESTRA V2 - Smoke Test",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        260,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://projetos26_maestra-v2:8080/health",
+        "options": {}
+      },
+      "id": "health",
+      "name": "Worker Health",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://projetos26_maestra-v2:8080/jobs",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.MAESTRA_TOKEN}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"mode\":\"smoke\",\"title\":\"n8n-smoke-test\",\"duration_seconds\":5,\"width\":1280,\"height\":720,\"fps\":30}",
+        "options": {}
+      },
+      "id": "create-job",
+      "name": "Create Smoke Job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        740,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 8
+      },
+      "id": "wait",
+      "name": "Wait 8s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        980,
+        300
+      ],
+      "webhookId": "maestra-v2-smoke-wait"
+    },
+    {
+      "parameters": {
+        "url": "=http://projetos26_maestra-v2:8080/jobs/{{$node['Create Smoke Job'].json['id']}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.MAESTRA_TOKEN}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-status",
+      "name": "Get Job Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1220,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Worker Health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Worker Health": {
+      "main": [
+        [
+          {
+            "node": "Create Smoke Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Smoke Job": {
+      "main": [
+        [
+          {
+            "node": "Wait 8s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 8s": {
+      "main": [
+        [
+          {
+            "node": "Get Job Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "maestra-v2-smoke-001"
+}
